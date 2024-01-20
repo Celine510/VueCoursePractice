@@ -7,9 +7,7 @@ const app = Vue.createApp({
       baseUrl: "https://ec-course-api.hexschool.io/v2",
       apiPath: "celine510",
       products: [],
-      tempProduct: {
-        imagesUrl:[],
-      },
+      tempProduct: {},
       tempImgUrl: "",
       showModal: false,
       delId: "",
@@ -82,7 +80,7 @@ const app = Vue.createApp({
           });
           productModal.hide();
           this.getProducts();
-          this.tempProduct = { imagesUrl: [] };
+          this.tempProduct = {};
         })
         .catch((err) => {
           console.dir(err);
@@ -90,7 +88,10 @@ const app = Vue.createApp({
     },
     // 新增&刪除圖片
     actImage(act) {
-      if (act === "add" && this.tempImgUrl) this.tempProduct.imagesUrl.push(this.tempImgUrl);
+      if (this.tempProduct.imagesUrl === undefined)
+        this.tempProduct.imagesUrl = [];
+      if (act === "add" && this.tempImgUrl)
+        this.tempProduct.imagesUrl.push(this.tempImgUrl);
       else if (act === "del") this.tempProduct.imagesUrl.pop();
       this.tempImgUrl = "";
     },
@@ -112,7 +113,7 @@ const app = Vue.createApp({
           });
           productModal.hide();
           this.getProducts();
-          this.tempProduct = { imagesUrl: [] };
+          this.tempProduct = {};
         })
         .catch((err) => {
           console.dir(err);
