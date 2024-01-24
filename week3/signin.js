@@ -12,7 +12,7 @@ const app = Vue.createApp({
       axios
         .post(`${this.baseUrl}/admin/signin`, user)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           document.cookie = `token=${res.data.token}; expires=${res.data.expired};`;
           Swal.fire({
             title: "登入成功",
@@ -23,7 +23,7 @@ const app = Vue.createApp({
           });
         })
         .catch((err) => {
-          console.dir(err);
+          // console.dir(err);
           Swal.fire({
             title: "登入失敗",
             text: "請重新登入",

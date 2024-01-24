@@ -19,12 +19,12 @@ const app = Vue.createApp({
       axios
         .post(`${this.baseUrl}/api/user/check`)
         .then((res) => {
-          console.log(res);
-          console.log("登入驗證成功");
+          // console.log(res);
+          // console.log("登入驗證成功");
           this.getProducts();
         })
         .catch((err) => {
-          console.dir(err);
+          // console.dir(err);
           Swal.fire({
             title: "登入失敗",
             text: "請前往登入",
@@ -39,23 +39,24 @@ const app = Vue.createApp({
       axios
         .get(`${this.baseUrl}/api/${this.apiPath}/admin/products`)
         .then((res) => {
-          console.dir(res);
+          // console.dir(res);
           this.products = res.data.products;
         })
         .catch((err) => {
-          console.dir(err);
+          // console.dir(err);
         });
     },
     // 刪除產品：當點擊'刪除'按鈕，將產品id寫入delId，當點擊'確認刪除'時，執行刪除動作
     delProduct() {
+      console.log();
       axios
         .delete(
           `${this.baseUrl}/api/${this.apiPath}/admin/product/${this.delId}`
         )
         .then((res) => {
-          console.dir(res);
+          // console.dir(res);
           Swal.fire({
-            title: "刪除成功",
+            title: `產品 ${this.tempProduct.title} 刪除成功`,
             icon: "success",
             timer: 1500,
           });
@@ -63,7 +64,7 @@ const app = Vue.createApp({
           delProductModal.hide();
         })
         .catch((err) => {
-          console.dir(err);
+          // console.dir(err);
         });
     },
     // 新增產品
@@ -72,7 +73,7 @@ const app = Vue.createApp({
       axios
         .post(`${this.baseUrl}/api/${this.apiPath}/admin/product`, data)
         .then((res) => {
-          console.dir(res);
+          // console.dir(res);
           Swal.fire({
             title: "產品新增成功",
             icon: "success",
@@ -80,10 +81,13 @@ const app = Vue.createApp({
           });
           productModal.hide();
           this.getProducts();
-          this.tempProduct = {};
         })
         .catch((err) => {
-          console.dir(err);
+          // console.dir(err);
+          Swal.fire({
+            title: `請注意：${err.data.message.join(',')}`,
+            icon: "error",
+          });
         });
     },
     // 新增&刪除圖片
@@ -105,7 +109,7 @@ const app = Vue.createApp({
           data
         )
         .then((res) => {
-          console.dir(res);
+          // console.dir(res);
           Swal.fire({
             title: "編輯成功",
             icon: "success",
@@ -113,19 +117,22 @@ const app = Vue.createApp({
           });
           productModal.hide();
           this.getProducts();
-          this.tempProduct = {};
         })
         .catch((err) => {
-          console.dir(err);
+          // console.dir(err);
         });
     },
     // 打開 modal
-    openModal(usage, product) {
+    openModal(usage, product = '') {
       if (usage === "edit") {
         this.tempProduct = { ...product };
         productModal.show();
+      } else if (usage === "new") {
+        this.tempProduct = {};
+        productModal.show();
       } else if (usage === "del") {
         this.delId = product.id;
+        this.tempProduct = { ...product };
         delProductModal.show();
       }
     },

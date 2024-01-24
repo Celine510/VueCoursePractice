@@ -14,7 +14,7 @@
   <div id="app">
     <div class="container">
       <div class="text-end mt-4">
-        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#productModal">
+        <button class="btn btn-primary" type="button" @click="openModal('new')">
           建立新的產品
         </button>
       </div>
@@ -46,8 +46,8 @@
             <td class="text-start">{{product.origin_price}}</td>
             <td class="text-start">{{product.price}}</td>
             <td>
-              <span class="text-success" v-if="product.is_enabled>0">啟用</span>
-              <span v-else-if="product.is_enabled===0">未啟用</span>
+              <span class="text-success" v-if="product.is_enabled">啟用</span>
+              <span v-else>未啟用</span>
             </td>
             <td>
               <div class="btn-group">
