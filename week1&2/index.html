@@ -77,11 +77,11 @@
                 </div>
               </div>
             </div>
-            <template v-for="item in tempProduct.imagesUrl" :key="item">
-              <img :src="item" alt="" class="images m-2" width="200">
+            <template v-if="tempProduct?.imagesUrl?.length">
+              <img :src="item" alt="" class="images m-2" width="200" v-for="item in tempProduct?.imagesUrl" :key="item">
             </template>
           </template>
-          <p class="text-secondary">請選擇一個商品查看</p>
+          <p class="text-secondary" v-else>請選擇一個商品查看</p>
         </div>
       </div>
     </div>
