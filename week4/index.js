@@ -1,24 +1,25 @@
-let productModal = null;
-let delProductModal = null;
-const baseUrl = "https://ec-course-api.hexschool.io/v2";
-const apiPath = "celine510";
+const { createApp } = Vue;
 
-const app = Vue.createApp({
+import pagination from "./components/pagination.js";
+import productModal from "./components/productModal.js";
+import deleteModal from "./components/deleteModal.js";
+
+const app = createApp({
   data() {
     return {
+      baseUrl: "https://ec-course-api.hexschool.io/v2",
+      apiPath: "celine510",
       products: [],
       tempProduct: {},
       tempImgUrl: "",
-      showModal: false,
-      delId: "",
-      pagination:{}
+      pages: {},
     };
   },
   methods: {
     // 登入狀態檢查，未登入導至登入頁
     checkAdmin() {
       axios
-        .post(`${baseUrl}/api/user/check`)
+        .post(`${this.baseUrl}/api/user/check`)
         .then((res) => {
           // console.log(res);
           // console.log("登入驗證成功");
@@ -35,26 +36,24 @@ const app = Vue.createApp({
           });
         });
     },
-    // 取得產品
-    getProducts(page = 1) { // 當前頁碼
+    // 取得產品 & 換頁
+    getProducts(page = 1) {
       axios
-        .get(`${baseUrl}/api/${apiPath}/admin/products?page=${page}`) // 網址參數寫法，將 page 參數代入，取得當前頁碼的產品資料
+        .get(`${this.baseUrl}/api/${this.apiPath}/admin/products?page=${page}`)
         .then((res) => {
-          const { products, pagination } = res.data;
-          console.log(pagination);
-          this.products = products;
-          this.pagination = pagination;
+          console.dir(res);
+          this.products = res.data.products;
+          this.pages = res.data.pagination;
         })
         .catch((err) => {
           // console.dir(err);
         });
     },
-    // 刪除產品：當點擊'刪除'按鈕，將產品id寫入delId，當點擊'確認刪除'時，執行刪除動作
+    // 刪除產品
     delProduct() {
-      console.log();
       axios
         .delete(
-          `${baseUrl}/api/${apiPath}/admin/product/${this.delId}`
+          `${this.baseUrl}/api/${this.apiPath}/admin/product/${this.tempProduct.id}`
         )
         .then((res) => {
           // console.dir(res);
@@ -64,31 +63,44 @@ const app = Vue.createApp({
             timer: 1500,
           });
           this.getProducts();
-          delProductModal.hide();
+          this.$refs.delModal.hideModal();
         })
         .catch((err) => {
           // console.dir(err);
         });
     },
-    // 新增產品
-    addProduct() {
+    // 更新產品
+    updateProduct() {
+      // 新增
+      let method = "post";
+      let plusUrl = "";
+
+      // 編輯
+      if (this.tempProduct.id) {
+        method = "put";
+        plusUrl = `/${this.tempProduct.id}`;
+      }
+
       const data = { data: this.tempProduct };
-      axios
-        .post(`${baseUrl}/api/${apiPath}/admin/product`, data)
+      axios[method](
+        `${this.baseUrl}/api/${this.apiPath}/admin/product${plusUrl}`,
+        data
+      )
         .then((res) => {
           // console.dir(res);
           Swal.fire({
-            title: "產品新增成功",
+            title: `產品${method === "post" ? "新增" : "編輯"}成功`,
             icon: "success",
             timer: 1500,
           });
-          productModal.hide();
+          // this.productModal.hide();
+          this.$refs.modal.hideModal();
           this.getProducts();
         })
         .catch((err) => {
           // console.dir(err);
           Swal.fire({
-            title: `請注意：${err.data.message.join(',')}`,
+            title: `請注意：${err.data.message.join(",")}`,
             icon: "error",
           });
         });
@@ -102,50 +114,27 @@ const app = Vue.createApp({
       else if (act === "del") this.tempProduct.imagesUrl.pop();
       this.tempImgUrl = "";
     },
-    // 編輯產品
-    editProduct() {
-      const productId = this.tempProduct.id;
-      const data = { data: this.tempProduct };
-      axios
-        .put(
-          `${baseUrl}/api/${apiPath}/admin/product/${productId}`,
-          data
-        )
-        .then((res) => {
-          // console.dir(res);
-          Swal.fire({
-            title: "編輯成功",
-            icon: "success",
-            timer: 1000,
-          });
-          productModal.hide();
-          this.getProducts();
-        })
-        .catch((err) => {
-          // console.dir(err);
-        });
-    },
     // 打開 modal
-    openModal(usage, product = '') {
+    openModal(usage, product = "") {
       if (usage === "edit") {
         this.tempProduct = { ...product };
-        productModal.show();
+        // 開啟內層元件方法
+        this.$refs.modal.showModal();
       } else if (usage === "new") {
         this.tempProduct = {};
-        productModal.show();
+        this.$refs.modal.showModal();
       } else if (usage === "del") {
-        this.delId = product.id;
+        console.log("打開刪除 modal 按鈕");
         this.tempProduct = { ...product };
-        delProductModal.show();
+        // 沒取到刪除modal
+        console.log(this.$refs);
+        console.log(this.$refs.modal);
+        console.log(this.$refs.delModal); // undefined
+        this.$refs.delModal.showModal();
       }
     },
   },
   mounted() {
-    productModal = new bootstrap.Modal(document.getElementById("productModal"));
-    delProductModal = new bootstrap.Modal(
-      document.getElementById("delProductModal")
-    );
-
     const myToken = document.cookie.replace(
       /(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/,
       "$1"
@@ -154,28 +143,11 @@ const app = Vue.createApp({
 
     this.checkAdmin();
   },
-});
-
-app.component("pagination", {
-  template: `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
-      <ul class="pagination">
-        <li class="page-item" :class="{'disabled': pagination.current_page === 1}">
-          <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page - 1)">Previous</a>
-        </li>
-        <li v-for="(item, index) in pagination.total_pages" :key="index" class="page-item" :class="{'active': item === pagination.current_page}">
-          <a class="page-link" href="#">1</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page + 1)">Next</a>
-        </li>
-      </ul>
-    </nav>`,
-    props: ['pages'],
-    methods: {
-      changePage(num){
-        this.$emit('change-page', num)
-      }
-    }
+  components: {
+    pagination,
+    productModal,
+    deleteModal,
+  },
 });
 
 app.mount("#app");
