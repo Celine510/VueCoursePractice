@@ -6,7 +6,6 @@ export default {
     };
   },
   methods: {
-    // 讓外層呼叫
     showModal() {
       this.productModal.show();
     },

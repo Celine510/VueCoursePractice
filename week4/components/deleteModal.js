@@ -7,8 +7,6 @@ export default {
   },
   methods: {
     showModal() {
-      // 沒取到
-      console.log(123);
       this.delProductModal.show();
     },
     hideModal() {
@@ -42,6 +40,5 @@ export default {
     </div>`,
   mounted() {
     this.delProductModal = new bootstrap.Modal(this.$refs.delProductModal);
-    this.delProductModal.show();
   },
 };

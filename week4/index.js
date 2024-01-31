@@ -126,10 +126,6 @@ const app = createApp({
       } else if (usage === "del") {
         console.log("打開刪除 modal 按鈕");
         this.tempProduct = { ...product };
-        // 沒取到刪除modal
-        console.log(this.$refs);
-        console.log(this.$refs.modal);
-        console.log(this.$refs.delModal); // undefined
         this.$refs.delModal.showModal();
       }
     },
