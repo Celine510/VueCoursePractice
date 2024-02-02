@@ -1,18 +1,16 @@
-const { createApp } = Vue;
 
-import pagination from "./components/pagination.js";
-import productModal from "./components/productModal.js";
-import deleteModal from "./components/deleteModal.js";
-
-const app = createApp({
+const app = Vue.createApp({
   data() {
     return {
       baseUrl: "https://ec-course-api.hexschool.io/v2",
       apiPath: "celine510",
       products: [],
-      tempProduct: {},
-      tempImgUrl: "",
-      pages: {},
+      tempProduct: {
+        imagesUrl: [],
+      },
+      isNew: false,
+      productModal: null,
+      delProductModal: null,
     };
   },
   methods: {
@@ -36,14 +34,13 @@ const app = createApp({
           });
         });
     },
-    // 取得產品 & 換頁
-    getProducts(page = 1) {
+    // 取得產品
+    getProducts() {
       axios
-        .get(`${this.baseUrl}/api/${this.apiPath}/admin/products?page=${page}`)
+        .get(`${this.baseUrl}/api/${this.apiPath}/admin/products`)
         .then((res) => {
           // console.dir(res);
           this.products = res.data.products;
-          this.pages = res.data.pagination;
         })
         .catch((err) => {
           // console.dir(err);
@@ -63,7 +60,7 @@ const app = createApp({
             timer: 1500,
           });
           this.getProducts();
-          this.$refs.delModal.hideModal();
+          this.delProductModal.hide();
         })
         .catch((err) => {
           // console.dir(err);
@@ -72,64 +69,61 @@ const app = createApp({
     // 更新產品
     updateProduct() {
       // 新增
-      let method = "post";
-      let plusUrl = "";
-
+      let method = 'post';
+      let plusUrl = '';
+      
       // 編輯
-      if (this.tempProduct.id) {
-        method = "put";
+      if(!this.isNew){
+        method = 'put';
         plusUrl = `/${this.tempProduct.id}`;
       }
 
       const data = { data: this.tempProduct };
-      axios[method](
-        `${this.baseUrl}/api/${this.apiPath}/admin/product${plusUrl}`,
-        data
-      )
+      axios
+        [method](`${this.baseUrl}/api/${this.apiPath}/admin/product${plusUrl}`, data)
         .then((res) => {
           // console.dir(res);
           Swal.fire({
-            title: `產品${method === "post" ? "新增" : "編輯"}成功`,
+            title: `產品${method === "post" ? '新增' : '編輯'}成功`,
             icon: "success",
             timer: 1500,
           });
-          // this.productModal.hide();
-          this.$refs.modal.hideModal();
+          this.productModal.hide();
           this.getProducts();
         })
         .catch((err) => {
           // console.dir(err);
           Swal.fire({
-            title: `請注意：${err.data.message.join(",")}`,
+            title: `請注意：${err.data.message.join(',')}`,
             icon: "error",
           });
         });
     },
-    // 新增&刪除圖片
-    actImage(act) {
-      if (this.tempProduct.imagesUrl === undefined)
-        this.tempProduct.imagesUrl = [];
-      if (act === "add" && this.tempImgUrl)
-        this.tempProduct.imagesUrl.push(this.tempImgUrl);
-      else if (act === "del") this.tempProduct.imagesUrl.pop();
-      this.tempImgUrl = "";
-    },
     // 打開 modal
-    openModal(usage, product = "") {
+    openModal(usage, product = '') {
       if (usage === "edit") {
         this.tempProduct = { ...product };
-        // 開啟內層元件方法
-        this.$refs.modal.showModal();
+        if (!Array.isArray(this.tempProduct.imagesUrl)){
+          this.tempProduct.imagesUrl = [];
+        }
+        this.isNew = false;
+        this.productModal.show();
       } else if (usage === "new") {
-        this.tempProduct = {};
-        this.$refs.modal.showModal();
+        this.tempProduct = {
+          imagesUrl: [],
+        };
+        this.isNew = true;
+        this.productModal.show();
       } else if (usage === "del") {
         this.tempProduct = { ...product };
-        this.$refs.delModal.showModal();
+        this.delProductModal.show();
       }
     },
   },
   mounted() {
+    this.productModal = new bootstrap.Modal(this.$refs.productModal);
+    this.delProductModal = new bootstrap.Modal(this.$refs.delProductModal);
+
     const myToken = document.cookie.replace(
       /(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/,
       "$1"
@@ -137,11 +131,6 @@ const app = createApp({
     axios.defaults.headers.common["Authorization"] = myToken;
 
     this.checkAdmin();
-  },
-  components: {
-    pagination,
-    productModal,
-    deleteModal,
   },
 });
 
