@@ -1,15 +1,16 @@
-
 const app = Vue.createApp({
   data() {
     return {
       baseUrl: "https://ec-course-api.hexschool.io/v2",
       apiPath: "celine510",
       products: [],
-      tempProduct: {},
+      tempProduct: {
+        imageUrl: "",
+      },
       tempImgUrl: "",
       showModal: false,
-      productModal :null,
-      delProductModal :null,
+      productModal: null,
+      delProductModal: null,
     };
   },
   methods: {
@@ -68,22 +69,24 @@ const app = Vue.createApp({
     // 更新產品
     updateProduct() {
       // 新增
-      let method = 'post';
-      let plusUrl = '';
-      
+      let method = "post";
+      let plusUrl = "";
+
       // 編輯
-      if(this.tempProduct.id){
-        method = 'put';
+      if (this.tempProduct.id) {
+        method = "put";
         plusUrl = `/${this.tempProduct.id}`;
       }
 
       const data = { data: this.tempProduct };
-      axios
-        [method](`${this.baseUrl}/api/${this.apiPath}/admin/product${plusUrl}`, data)
+      axios[method](
+        `${this.baseUrl}/api/${this.apiPath}/admin/product${plusUrl}`,
+        data
+      )
         .then((res) => {
           // console.dir(res);
           Swal.fire({
-            title: `產品${method === "post" ? '新增' : '編輯'}成功`,
+            title: `產品${method === "post" ? "新增" : "編輯"}成功`,
             icon: "success",
             timer: 1500,
           });
@@ -93,7 +96,7 @@ const app = Vue.createApp({
         .catch((err) => {
           // console.dir(err);
           Swal.fire({
-            title: `請注意：${err.data.message.join(',')}`,
+            title: `請注意：${err.data.message.join(",")}`,
             icon: "error",
           });
         });
@@ -108,7 +111,7 @@ const app = Vue.createApp({
       this.tempImgUrl = "";
     },
     // 打開 modal
-    openModal(usage, product = '') {
+    openModal(usage, product = "") {
       if (usage === "edit") {
         this.tempProduct = { ...product };
         this.productModal.show();
