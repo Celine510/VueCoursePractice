@@ -1,9 +1,10 @@
 export default {
-  props: ["tempProduct", "actImage", "tempImgUrl", "updateProduct"],
+  props: ["tempProduct", "actImage", "updateProduct"],
   data() {
     return {
       productModal: null,
-      mainImgUrl: "",
+      mainImageUrl: "",
+      tempImageUrl: "",
     };
   },
   methods: {
@@ -13,8 +14,14 @@ export default {
     hideModal() {
       this.productModal.hide();
     },
-    uploadData() {
-      this.$emit("uploadMainImg", this.mainImgUrl);
+    uploadMainImg() {
+      this.$emit("uploadMainImg", this.mainImageUrl);
+    },
+    insideImage(act) {
+      if (act === "add" && this.tempImageUrl)
+        this.$emit("addDetailImage", this.tempImageUrl);
+      else if (act === "del") this.$emit("deleteDetailImage");
+      this.tempImageUrl = "";
     },
   },
   template: `<div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel" :class="{ 'show': showModal }"
@@ -34,19 +41,19 @@ export default {
                 <div class="mb-2">
                   <div class="mb-3">
                     <label for="imageUrl" class="form-label">輸入主圖</label>
-                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="mainImgUrl">
-                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="uploadData">
+                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="mainImageUrl">
+                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="uploadMainImg">
                       新增圖片
                     </button>
                     <img class="img-fluid" alt="" :src="tempProduct.imageUrl" >
                   </div>
                   <div class="mb-3">
                     <label for="imageDetailUrl" class="form-label">輸入詳細圖</label>
-                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="tempImgUrl">
-                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="actImage('add')">
+                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="tempImageUrl">
+                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="insideImage('add')">
                       新增圖片
                     </button>
-                    <button class="btn btn-outline-danger btn-sm d-block w-100" @click="actImage('del')">
+                    <button class="btn btn-outline-danger btn-sm d-block w-100" @click="insideImage('del')">
                       刪除圖片
                     </button>
                   </div>

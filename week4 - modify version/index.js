@@ -134,6 +134,14 @@ const app = createApp({
     uploadData(newData) {
       this.tempProduct.imageUrl = newData;
     },
+    uploadImages(newData) {
+      if (this.tempProduct.imagesUrl === undefined)
+        this.tempProduct.imagesUrl = [];
+      this.tempProduct.imagesUrl.push(newData);
+    },
+    deleteImages() {
+      this.tempProduct.imagesUrl.pop();
+    },
   },
   mounted() {
     const myToken = document.cookie.replace(
