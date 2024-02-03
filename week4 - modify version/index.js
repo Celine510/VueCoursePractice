@@ -97,7 +97,7 @@ const app = createApp({
             icon: "success",
             timer: 1500,
           });
-          this.$refs.modal.hideModal();
+          this.$refs.proModal.hideModal();
           this.getProducts();
         })
         .catch((err) => {
@@ -131,11 +131,8 @@ const app = createApp({
       }
     },
     // 接收子元件傳遞的資料 - 主圖 url
-    updateData(newData){
-      console.log('updateData()'); // 有印出
-      console.log(newData); // 未接收到參數
-      // this.tempProduct.imageUrl = newData;
-      // console.log(this.tempProduct.imageUrl);
+    uploadData(newData) {
+      this.tempProduct.imageUrl = newData;
     },
   },
   mounted() {

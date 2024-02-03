@@ -13,9 +13,8 @@ export default {
     hideModal() {
       this.productModal.hide();
     },
-    updateData() {
-      console.log("updateData()");
-      this.$emit("update-Data", this.mainImgUrl);
+    uploadData() {
+      this.$emit("uploadMainImg", this.mainImgUrl);
     },
   },
   template: `<div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel" :class="{ 'show': showModal }"
@@ -35,8 +34,8 @@ export default {
                 <div class="mb-2">
                   <div class="mb-3">
                     <label for="imageUrl" class="form-label">輸入主圖</label>
-                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-modal="mainImgUrl">
-                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="updateData">
+                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="mainImgUrl">
+                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="uploadData">
                       新增圖片
                     </button>
                     <img class="img-fluid" alt="" :src="tempProduct.imageUrl" >
@@ -119,8 +118,8 @@ export default {
       </div>
     </div>`,
   mounted() {
-    console.log(123);
+    // console.log(123);
     this.productModal = new bootstrap.Modal(this.$refs.productModal);
-    console.log(this.productModal);
+    // console.log(this.productModal);
   },
 };
