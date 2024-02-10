@@ -4,11 +4,12 @@ import pagination from './components/pagination.js';
 import deleteModal from "./components/deleteModal.js";
 import productModal from "./components/productModal.js";
 
+const baseUrl = "https://ec-course-api.hexschool.io/v2";
+const apiPath = "celine510";
+
 const app = createApp({
   data() {
     return {
-      baseUrl: "https://ec-course-api.hexschool.io/v2",
-      apiPath: "celine510",
       products: [],
       tempProduct: {
         imageUrl: "",
@@ -22,7 +23,7 @@ const app = createApp({
     // 登入狀態檢查，未登入導至登入頁
     checkAdmin() {
       axios
-        .post(`${this.baseUrl}/api/user/check`)
+        .post(`${baseUrl}/api/user/check`)
         .then((res) => {
           // console.log(res);
           // console.log("登入驗證成功");
@@ -42,7 +43,7 @@ const app = createApp({
     // 取得產品
     getProducts(page = 1) {
       axios
-        .get(`${this.baseUrl}/api/${this.apiPath}/admin/products?page=${page}`)
+        .get(`${baseUrl}/api/${apiPath}/admin/products?page=${page}`)
         .then((res) => {
           // console.dir(res);
           this.products = res.data.products;
@@ -57,7 +58,7 @@ const app = createApp({
     delProduct() {
       axios
         .delete(
-          `${this.baseUrl}/api/${this.apiPath}/admin/product/${this.tempProduct.id}`
+          `${baseUrl}/api/${apiPath}/admin/product/${this.tempProduct.id}`
         )
         .then((res) => {
           // console.dir(res);
@@ -87,7 +88,7 @@ const app = createApp({
 
       const data = { data: this.tempProduct };
       axios[method](
-        `${this.baseUrl}/api/${this.apiPath}/admin/product${plusUrl}`,
+        `${baseUrl}/api/${apiPath}/admin/product${plusUrl}`,
         data
       )
         .then((res) => {

@@ -1,5 +1,5 @@
 export default {
-  props: ["tempProduct", "actImage", "updateProduct"],
+  props: ["tempProduct"],
   data() {
     return {
       productModal: null,
@@ -16,12 +16,16 @@ export default {
     },
     uploadMainImg() {
       this.$emit("uploadMainImg", this.mainImageUrl);
+      this.mainImageUrl = "";
     },
     insideImage(act) {
       if (act === "add" && this.tempImageUrl)
         this.$emit("addDetailImage", this.tempImageUrl);
       else if (act === "del") this.$emit("deleteDetailImage");
       this.tempImageUrl = "";
+    },
+    updateProduct(){
+      this.$emit("updateProduct");
     },
   },
   template: `<div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel" :class="{ 'show': showModal }"
@@ -57,12 +61,12 @@ export default {
                       刪除圖片
                     </button>
                   </div>
-                  <div v-if="tempProduct.imagesUrl">
+                  <template v-if="tempProduct.imagesUrl">
                     <div v-for="(item,index) in tempProduct.imagesUrl" :key="index">
                       <img class="img-fluid" alt="" :src="item" >
                       <input type="text" class="form-control" v-model="tempProduct.imagesUrl[index]">
                     </div>
-                  </div>
+                  </template>
                 </div>
               </div>
               <div class="col-sm-8">
@@ -77,7 +81,7 @@ export default {
                     <input id="category" type="text" class="form-control" placeholder="請輸入分類" v-model="tempProduct.category">
                   </div>
                   <div class="mb-3 col-md-6">
-                    <label for="price" class="form-label">單位</label>
+                    <label for="unit" class="form-label">單位</label>
                     <input id="unit" type="text" class="form-control" placeholder="請輸入單位" v-model="tempProduct.unit">
                   </div>
                 </div>
@@ -101,7 +105,7 @@ export default {
                 </div>
                 <div class="mb-3">
                   <label for="content" class="form-label">說明內容</label>
-                  <textarea id="description" type="text" class="form-control" placeholder="請輸入說明內容" v-model="tempProduct.content">
+                  <textarea id="content" type="text" class="form-control" placeholder="請輸入說明內容" v-model="tempProduct.content">
                     </textarea>
                 </div>
                 <div class="mb-3">

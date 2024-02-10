@@ -1,16 +1,17 @@
+const baseUrl = "https://ec-course-api.hexschool.io/v2";
+
 const app = Vue.createApp({
   data() {
     return {
       email: "",
       password: "",
-      baseUrl: "https://ec-course-api.hexschool.io/v2",
     };
   },
   methods: {
     signIn() {
       const user = { username: this.email, password: this.password };
       axios
-        .post(`${this.baseUrl}/admin/signin`, user)
+        .post(`${baseUrl}/admin/signin`, user)
         .then((res) => {
           // console.log(res);
           document.cookie = `token=${res.data.token}; expires=${res.data.expired};`;
