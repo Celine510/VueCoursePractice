@@ -1,6 +1,6 @@
 const { createApp } = Vue;
 
-import pagination from './components/pagination.js';
+import pagination from "./components/pagination.js";
 import deleteModal from "./components/deleteModal.js";
 import productModal from "./components/productModal.js";
 
@@ -87,10 +87,7 @@ const app = createApp({
       }
 
       const data = { data: this.tempProduct };
-      axios[method](
-        `${baseUrl}/api/${apiPath}/admin/product${plusUrl}`,
-        data
-      )
+      axios[method](`${baseUrl}/api/${apiPath}/admin/product${plusUrl}`, data)
         .then((res) => {
           // console.dir(res);
           Swal.fire({
@@ -109,15 +106,6 @@ const app = createApp({
           });
         });
     },
-    // 新增&刪除圖片
-    actImage(act) {
-      if (this.tempProduct.imagesUrl === undefined)
-        this.tempProduct.imagesUrl = [];
-      if (act === "add" && this.tempImgUrl)
-        this.tempProduct.imagesUrl.push(this.tempImgUrl);
-      else if (act === "del") this.tempProduct.imagesUrl.pop();
-      this.tempImgUrl = "";
-    },
     // 打開 modal
     openModal(usage, product = "") {
       if (usage === "edit") {
@@ -132,6 +120,7 @@ const app = createApp({
       }
     },
     // 接收子元件傳遞的資料 - 主圖 url
+    // 新增&刪除圖片
     uploadData(newData) {
       this.tempProduct.imageUrl = newData;
     },
