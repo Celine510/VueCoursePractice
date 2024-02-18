@@ -1,17 +1,17 @@
-import userProductModal from "./components/userProductModal.js";
-
 const { createApp } = Vue;
-const { createPinia, defineStore } = Pinia;
+const { createPinia } = Pinia;
+
+import ProductModal from "./components/ProductModal.js";
 
 const baseUrl = "https://ec-course-api.hexschool.io";
 const apiPath = "celine510";
 
-const useCartStore = defineStore("useCartStore", {
-  state: () => ({
-    msg: 123,
-  }),
-  getters: {},
-});
+// const useCartStore = defineStore("useCartStore", {
+//   state: () => ({
+//     msg: 123,
+//   }),
+//   getters: {},
+// });
 
 const app = createApp({
   data() {
@@ -33,7 +33,7 @@ const app = createApp({
       console.log(this.$refs);
     });
   },
-  components: { userProductModal },
+  components: { ProductModal },
 });
 
 const pinia = createPinia();
