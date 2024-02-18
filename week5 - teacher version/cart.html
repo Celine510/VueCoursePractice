@@ -149,47 +149,48 @@
             </tfoot>
           </table>
         </div>
-        <!-- <div class="my-5 row justify-content-center">
-          <v-form ref="form" class="col-md-6" v-slot="{ errors }" >
+        <div class="my-5 row justify-content-center">
+          <v-form ref="form" class="col-md-6" v-slot="{ errors }" @submit="onSubmit">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <v-field id="email" name="email" type="email" class="form-control"
-                       :class="{ 'is-invalid': errors['email'] }" placeholder="請輸入 Email" 
-                      ></v-field>
+                :class="{ 'is-invalid': errors['email'] }" placeholder="請輸入 Email"
+                rules="email|required">
+              </v-field>
               <error-message name="email" class="invalid-feedback"></error-message>
             </div>
 
             <div class="mb-3">
               <label for="name" class="form-label">收件人姓名</label>
-              <v-field id="name" name="姓名" type="text" class="form-control" :class="{ 'is-invalid': errors['姓名'] }"
-                       placeholder="請輸入姓名" rules="required"></v-field>
-              <error-message name="姓名" class="invalid-feedback"></error-message>
+              <v-field id="name" name="name" type="text" class="form-control" :class="{ 'is-invalid': errors['name'] }"
+                placeholder="請輸入姓名" rules="required"></v-field>
+              <error-message name="name" class="invalid-feedback"></error-message>
             </div>
 
             <div class="mb-3">
               <label for="tel" class="form-label">收件人電話</label>
-              <v-field id="tel" name="電話" type="text" class="form-control" :class="{ 'is-invalid': errors['電話'] }"
-                       placeholder="請輸入電話" ></v-field>
-              <error-message name="電話" class="invalid-feedback"></error-message>
+              <v-field id="tel" name="tel" type="text" class="form-control" :class="{ 'is-invalid': errors['tel'] }"
+                placeholder="請輸入電話" rules="required|min:9"></v-field>
+              <error-message name="tel" class="invalid-feedback"></error-message>
             </div>
 
             <div class="mb-3">
               <label for="address" class="form-label">收件人地址</label>
-              <v-field id="address" name="地址" type="text" class="form-control" :class="{ 'is-invalid': errors['地址'] }"
-                       placeholder="請輸入地址" rules="required" ></v-field>
-              <error-message name="地址" class="invalid-feedback"></error-message>
+              <v-field id="address" name="address" type="text" class="form-control" :class="{ 'is-invalid': errors['address'] }"
+                placeholder="請輸入地址" rules="required" ></v-field>
+              <error-message name="address" class="invalid-feedback"></error-message>
             </div>
 
             <div class="mb-3">
               <label for="message" class="form-label">留言</label>
-              <textarea id="message" class="form-control" cols="30" rows="10" ></textarea>
+              <textarea id="message" class="form-control" cols="30" rows="10" v-model="formMessage"></textarea>
             </div>
             <div class="text-end">
               <button type="submit" class="btn btn-danger"
                       >送出訂單</button>
             </div>
           </v-form>
-        </div> -->
+        </div>
       </div>
     </div>
     <script type="text/x-template" id="userProductModal">
@@ -207,12 +208,12 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col-sm-6">
-                  <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
+                  <img class="img-fluid" :src="tempProduct.imageUrl">
                 </div>
                 <div class="col-sm-6">
                   <span class="badge bg-primary rounded-pill">{{ tempProduct.category }}</span>
-                  <p>商品描述：{{ tempProduct.description }}</p>
-                  <p>商品內容：{{ tempProduct.content }}</p>
+                  <p v-if="tempProduct.description">商品描述：{{ tempProduct.description }}</p>
+                  <p v-if="tempProduct.content">商品內容：{{ tempProduct.content }}</p>
                   <div class="h5" v-if="tempProduct.price === tempProduct.origin_price">{{ tempProduct.price }} 元</div>
                   <div v-else>
                     <del class="h6">原價 {{ tempProduct.origin_price }} 元</del>
@@ -220,8 +221,6 @@
                   </div>
                   <div>
                     <div class="input-group">
-                      <!-- <input type="number" class="form-control"
-                            min="1" v-model="qty"> -->
                       <select name="" id="" class="form-select" v-model="qty">
                         <option :value="i" v-for="i in 20" :key="i">{{ i }}</option>
                       </select>
@@ -248,11 +247,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
             integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
             crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@next"></script>
-    <!-- <script src="https://unpkg.com/vee-validate@next"></script>
-    <script src="https://unpkg.com/@vee-validate/i18n@4.1.0"></script>
-    <script src="https://unpkg.com/@vee-validate/rules"></script> -->
-    <!-- <script src="./javascript/app2.js" type="module"></script> -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/4.12.4/vee-validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vee-validate/rules@4.12.4/dist/vee-validate-rules.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vee-validate/i18n@4.12.4/dist/vee-validate-i18n.min.js"></script>
     <script src="cart.js" type="module"></script>
   </body>
 

@@ -1,4 +1,4 @@
-import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.esm-browser.min.js";
+const { createApp } = Vue;
 
 const apiUrl = "https://ec-course-api.hexschool.io/v2";
 const apiPath = "celine510";
@@ -30,6 +30,21 @@ const userModal = {
     this.productModal = new bootstrap.Modal(this.$refs.modal);
   },
 };
+// vee-validate
+Object.keys(VeeValidateRules).forEach((rule) => {
+  if (rule !== "default") {
+    VeeValidate.defineRule(rule, VeeValidateRules[rule]);
+  }
+});
+
+VeeValidateI18n.loadLocaleFromURL(
+  "https://unpkg.com/@vee-validate/i18n@4.5.8/dist/locale/zh_TW.json"
+);
+
+VeeValidate.configure({
+  generateMessage: VeeValidateI18n.localize("zh_TW"),
+  validateOnInput: true,
+});
 
 const app = createApp({
   data() {
@@ -42,6 +57,7 @@ const app = createApp({
         cartRemoveLoading: false,
       },
       carts: {},
+      formMessage: "",
     };
   },
   methods: {
@@ -88,25 +104,21 @@ const app = createApp({
           this.getCart();
         });
     },
-    removeCartItem(id){
-      this.status.cartRemoveLoading = true;
-      axios
-        .delete(`${apiUrl}/api/${apiPath}/cart/${id}`)
-        .then((res) => {
-          console.log(res);
-          this.status.cartRemoveLoading = false;
-          this.getCart();
-        });
+    removeCartItem(id) {
+      this.status.cartQtyLoading = id;
+      axios.delete(`${apiUrl}/api/${apiPath}/cart/${id}`).then((res) => {
+        console.log(res);
+        this.status.cartQtyLoading = "";
+        this.getCart();
+      });
     },
-    removeAllCartItem(){
-      // this.status.cartQtyLoading = id;
-      axios
-        .delete(`${apiUrl}/api/${apiPath}/carts`)
-        .then((res) => {
-          console.log(res);
-          // this.status.cartQtyLoading = "";
-          this.getCart();
-        });
+    removeAllCartItem() {
+      this.status.cartRemoveLoading = true;
+      axios.delete(`${apiUrl}/api/${apiPath}/carts`).then((res) => {
+        console.log(res);
+        this.status.cartRemoveLoading = false;
+        this.getCart();
+      });
     },
     getCart() {
       axios.get(`${apiUrl}/api/${apiPath}/cart`).then((res) => {
@@ -115,6 +127,27 @@ const app = createApp({
         this.carts = res.data.data;
         console.log(this.carts);
       });
+    },
+    onSubmit(value) {
+      console.log(value);
+      const user = {
+        name: value.name,
+        email: value.email,
+        tel: value.tel,
+        address: value.address,
+      };
+      console.log(user);
+      axios
+        .post(`${apiUrl}/api/${apiPath}/order`, {
+          data: { user, message: this.formMessage },
+        })
+        .then((res) => {
+          console.log(res);
+          this.getCart();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
   components: {
@@ -125,5 +158,9 @@ const app = createApp({
     this.getCart();
   },
 });
+
+app.component("VForm", VeeValidate.Form);
+app.component("VField", VeeValidate.Field);
+app.component("ErrorMessage", VeeValidate.ErrorMessage);
 
 app.mount("#app");
